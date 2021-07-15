@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head') %> 
+<body class="product-new">
+    <%- include('../partials/header') %> 
+    <main>
+        <div class="container">
+            <section>
+                <div class="columns is-centered">
+                    <div class="column is-6">
+                        <h1>Nuevo producto</h1>
+                        <form action="/products" method="POST" enctype="multipart/form-data">
+                            <div class="field">
+                                <label for="name">Nombre</label>
+                                <div class="control">
+                                    <input type="text" name="name" value="<%= locals.old && old.name ? old.name : '' %>"
+                                    placeholder="Nombre" maxlength="40">
+                                    <% if (locals.errors && errors.name){ %>
+                                        <div class="text-danger">
+                                            <%= errors.name.msg %>
+                                        </div>
+                                        <% } %>
+                                </div>
+                                <p class="feedback"></p>
+                            </div>
+
+                            <div class="field">
+                                <label for="name">Modelo</label>
+                                <div class="control">
+                                    <input type="text" name="model" value="<%= locals.old && old.model ? old.model : '' %>"
+                                    placeholder="Modelo" maxlength="40">
+                                    <% if (locals.errors && errors.model){ %>
+                                        <div class="text-danger">
+                                            <%= errors.model.msg %>
+                                        </div>
+                                        <% } %>
+                                </div>
+                                <p class="feedback"></p>
+                            </div>
+
+                            <div class="field">
+                                <label for="description">Descripción</label>
+                                <div class="control">
+                                    <textarea name="description"><%= locals.old && old.description ? old.description : '' %></textarea>
+                                    <% if (locals.errors && errors.description){ %>
+                                        <div class="text-danger">
+                                            <%= errors.description.msg %>
+                                        </div>
+                                        <% } %>
+                                </div>
+                                <p class="feedback"></p>
+                            </div>
+                            <div class="field">
+                                <label for="description">Categoria</label>
+                                <div class="control">
+                                    <select name="categoryId">
+                                        <% categories.forEach(onecategory => { %>
+                                         <option value="<%= onecategory.id %>" <%=locals.old && old.category=='onecategory.id' ? 'selected' : '' %>><%= onecategory.name %> </option>
+                                        <% }) %>
+                                    </select>
+                                    <% if (locals.errors && errors.category){ %>
+                                        <div class="text-danger">
+                                            <%= errors.category.msg %>
+                                        </div>
+                                        <% } %>
+                                </div>
+                                <p class="feedback"></p>
+                            </div>
+                            <div class="field">
+                                <label for="description">Marca</label>
+                                <div class="control">
+                                    <select name="brandId">
+                                        <% brands.forEach(oneBrand => { %>
+                                         <option value="<%= oneBrand.id %>" <%= locals.old && old.brandId == 'oneBrand.id' ? 'selected' : '' %> ><%= oneBrand.name %></option>
+                                        <% }) %>
+                                    </select>
+                                    <% if (locals.errors && errors.brandId){ %>
+                                        <div class="text-danger">
+                                            <%= errors.brandId.msg %>
+                                        </div>
+                                        <% } %>
+                                </div>
+                                <p class="feedback"></p>
+                            </div>
+
+                            <div class="field">
+                                <label for="description">Colores <i>(elegí varios pulsando la tecla control)</i></label>
+                                <div class="control">
+                                    <select name="colors" multiple>
+                                        <% colors.forEach(oneColor => { %>
+                                         <option value="<%= oneColor.id %>"><%= oneColor.name %> </option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                                <p class="feedback"></p>
+                            </div>
+                            <div class="field">
+                                <label for="price">Precio</label>
+                                <div class="control">
+                                    <input type="number" name="price"   value="<%= locals.old && old.price ? old.price : '' %>" placeholder="$"
+                                    maxlength="6">
+                                    <% if (locals.errors && errors.price){ %>
+                                        <div class="text-danger">
+                                            <%= errors.price.msg %>
+                                        </div>
+                                        <% } %>
+                                </div>
+                            </div>
+
+
+                            <div class="field">
+                                <label for="cost">Costo</label>
+                                <div class="control">
+                                    <input type="number" name="cost"  value="<%= locals.old && old.cost ? old.cost : '' %>" placeholder="$"
+                                    maxlength="6">
+                                    <% if (locals.errors && errors.cost){ %>
+                                        <div class="text-danger">
+                                            <%= errors.cost.msg %>
+                                        </div>
+                                        <% } %>
+                                </div>
+                            </div>
+
+
+                            <div class="field">
+                                <label for="stock">Stock</label>
+                                <div class="control">
+                                    <input type="number" name="stock" value="<%= locals.old && old.stock ? old.stock : '' %>" placeholder=""
+                                    maxlength="6">
+                                    <% if (locals.errors && errors.cost){ %>
+                                        <div class="text-danger">
+                                            <%= errors.cost.msg %>
+                                        </div>
+                                        <% } %>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label for="image">Imagen</label>
+                                <div class="control">
+                                    <input type="file" name="image">
+                                    <% if (locals.errors && errors.file){ %>
+                                        <div class="text-danger">
+                                            <%= errors.file.msg %>
+                                        </div>
+                                        <% } %>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label for="keywords">Etiquetas <i>(separadas por espacio)</i></label>
+                                <div class="control">
+                                    <input type="text" name="keywords">
+                                </div>
+                                <p class="feedback"></p>
+                            </div>
+
+                            <div class="field">
+                                <div class="control">
+                                    <button type="submit">Crear producto</button>
+                                </div>
+                            </div>
+                        </form>  
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <%- include('../partials/footer') %> 
+</body>
+</html>

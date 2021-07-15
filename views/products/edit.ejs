@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head') %> 
+<body>
+    <%- include('../partials/header') %> 
+    <main>
+        <div class="container">
+            <section>
+                <div class="columns is-centered">
+                    <div class="column is-6">
+                        <h1>Editar producto</h1>
+                        <img src="/images/products/<%= product.image %>" width="50%">
+                        <form action="/products/<%= product.id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+
+                            <div class="field">
+                                <label for="name">Nombre</label>
+                                <div class="control">
+                                    <input type="text" name="name" value="<%= product.name %>">
+                                </div>
+                                <p class="feedback"></p>
+                            </div>
+
+                            <div class="field">
+                                <label for="description">Descripción</label>
+                                <div class="control">
+                                    <textarea name="description"><%= product.description %></textarea>
+                                </div>
+                                <p class="feedback"></p>
+                            </div>
+
+                            <div class="field">
+                                <label for="price">Precio</label>
+                                <div class="control">
+                                    <input type="text" name="price" value="<%= product.price %>">
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label for="description">Marca</label>
+                                <div class="control">
+                                    <select name="brandId">
+                                        <% brands.forEach(oneBrand => { %>
+                                        <option 
+                                            value="<%= oneBrand.id %>"
+                                            <%= oneBrand.id === product.brandId ? 'selected' : null %> 
+                                        >
+                                            <%= oneBrand.name %> 
+                                        </option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                                <p class="feedback"></p>
+                            </div>
+
+
+                            <div class="field">
+                                <label for="description">Colores <i>(elegí varios pulsando la tecla control)</i></label>
+                                <div class="control">
+                                    <select name="colors" multiple>
+                                        <% colors.forEach(oneColor => { %>
+                                        <option value="<%= oneColor.id %>"><%= oneColor.name %> </option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                                <p class="feedback"></p>
+                            </div>
+
+                            <div class="field">
+                                <label for="image">Imagen</label>
+                                <div class="control">
+                                    <input type="file" name="image">
+                                    <input type="hidden" name="oldImage" value="<%= product.image %>">
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label for="keywords">Etiquetas</label>
+                                <div class="control">
+                                    <input type="text" name="keywords" value="<%= product.keywords %>">
+                                </div>
+                                <p class="feedback"></p>
+                            </div>
+
+                            <div class="field">
+                                <div class="control">
+                                    <button type="submit">Actualizar producto</button>
+                                </div>
+                            </div> 
+                        </form>  
+                        <form class="form is-inline" action="/products/<%= product.id %>?_method=DELETE" method="POST">
+                            <button type="submit" class="button is-danger">Borrar</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    <%- include('../partials/footer') %> 
+</body>
+</html>
