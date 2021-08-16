@@ -1,19 +1,22 @@
 const { body } = require('express-validator');
 const path = require('path');
-const models = require('../database/models');
+const {Product, Category, User, Brand, Store} = require('../database/models')
 const cadena = ['puta','puto','mierda', 'putas','putos','mierdas'];     
 
 const validations = {
     validetUserCreate : [
     body('name').notEmpty().withMessage('Ingresa tu Nombre!'), 
     body('userName').notEmpty().withMessage('Completa con tu Nombre de Usuario!'), 
-    body('email').isEmail().withMessage('ingresar un Email Valido').bail().custom(value => {
-      return Store.findOne(Store,{
-          where: {email: value}})
-          .then(store => {
-            return Promise.reject('E-mail already in use');
-          })
-        }),   
+    body('email').isEmail().withMessage('debes ingresar un Email Valido').bail().custom (async (value, {req}) => {
+      const user = await User.findOne({
+        where: { email: req.body.email }
+      });
+      if(user){
+          throw new Error('Email ya Existe!');
+     }
+  return true;
+      
+}),  
  
     body('fecha').notEmpty().withMessage('Ingresa una Fecha!'), 
     body('domicilio').notEmpty().withMessage('Completa con tu Direccion!'), 
@@ -153,6 +156,43 @@ const validations = {
           return true;
         }),
     ],
+    ///////////////////////////////////////////////API////////////////////////
+    validetStoreCreate : [
+      body('storeName').notEmpty().withMessage('Ingresa tu Nombre!').bail().custom (async (value, {req}) => {
+        const store = await Store.findOne({
+          where: { name: req.body.storeName }
+        });
+        if(store){
+            throw new Error('name alredy in use!');
+       }
+    return true;
+        
+  }),
+      body('lastName').notEmpty().withMessage('Completa con tu Nombre de Usuario!'), 
+      body('email').isEmail().withMessage('ingresar un Email Valido').bail().custom (async (value, {req}) => {
+        const user = await User.findOne({
+          where: { email: req.body.email }
+        });
+        if(user){
+            throw new Error('Email ya Existe!');
+       }
+    return true;
+        
+  }),   
+      body('storeAddress').notEmpty().withMessage('Completa con tu Direccion!'), 
+      body('password').isLength({ min: 20 }).withMessage('coloca una clave mayor a 8 digitos pueden ser numero y letras!'), 
+      body('storePhone').notEmpty().withMessage('Ingresa tu telefono!'),    
+      body('storeEmail').isEmail().withMessage('ingresar un Email Valido').bail().custom (async (value, {req}) => {
+        const store = await Store.findOne({
+          where: { email: req.body.storeEmail }
+        });
+        if(store){
+            throw new Error('Email ya Existe!');
+       }
+    return true;
+        
+  })
+   ],
     
 }
 

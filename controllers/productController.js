@@ -7,7 +7,7 @@ module.exports = {
     index(req, res) {
          Product
             .findAll({
-               include: ['brand','store','category']
+               include: ['brand','store','category','images']
             })
             .then(products => {
        //       res.json(products)

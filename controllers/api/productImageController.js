@@ -9,24 +9,20 @@ module.exports = {
             return res.status(200).json(allbrands);
     },
     show: (req, res) => {
-        console.log('----------ENTRE AL Show----------');
-        Product
-            .findByPk(req.params.id, {
-                include: ['brand', 'colors'],
+        Image
+            .findAll( {
+                where: {productId: req.params.id}})
+            .then(images => {
+                return res.status(200).json(images);
             })
-            .then(product => {
-                if (product) {
-                //    res.json(product)
-                    res.render('products/show', { product });
-                } else {
-                    res.render('products/404');
-                }
+            .catch(error => {
+              return res.status(401).json(error);
             })
-            .catch(error => res.send(error));
-    },
+        },
 
     store: (req, res) => {
-        console.log(req.file)
+        console.log("I am create image new")
+        console.log(req.body)
        let errors = validationResult(req);
       
        if(errors.isEmpty()){
@@ -48,7 +44,7 @@ module.exports = {
            
         }else{
             console.log(errors)
-            return res.status(200).json(errors);
+            return res.status(500).json(errors);
         }   
          
     },
@@ -63,12 +59,12 @@ module.exports = {
         try {
             let errors = validationResult(req);
             if(errors.isEmpty()){
-             const brand = req.body;
-             brand.photo = req.file ? req.file.filename : '';
-             console.log(brand);
+             const image = req.body;
+             image.name = req.file ? req.file.filename : '';
+             console.log('entre a validar imagen');
     
-            Brand.update(brand, {
-                 where: {id: brand.id}})
+             Image.update(image, {
+                 where: {id: image.id}})
                  .then(confirm => {
                     return res.status(200).json(confirm); 
                  })
@@ -77,42 +73,33 @@ module.exports = {
                 return res.status(401).json(errors);
              } 
         } catch (error) {
-            console.log('ocurrio un erro en la acualizacion de brand')
+            console.log('ocurrio un erro en la acualizacion de image')
         }
 
     },
     destroy: (req, res) => {
-        let brandId = req.params.id;
-        Brand
-        .destroy({where: {id:brandId}, force: true}) // force: true es para asegurar que se ejecute la acción
+        let imageId = req.params.id;
+        Image
+        .destroy({where: {id:imageId}, force: true}) // force: true es para asegurar que se ejecute la acción
         .then(confirm => {
             let respuesta;
-            if(confirm){
-                respuesta ={
+                  respuesta ={
                     meta: {
                         status: 200,
                         total: confirm.length,
-                        url: 'api/brand/destroy/:id'
+                        url: 'api/image/destroy/:id'
                     },
                     data:confirm
                 }
-            }else{
-                respuesta ={
-                    meta: {
-                        status: 204,
-                        total: confirm.length,
-                        url: 'api/brand/destroy/:id'
-                    },
-                    data:confirm
-                }
-            }
-            res.json(respuesta);
-        })    
+                res.json(respuesta);
+            })    
         .catch(error => res.send(error)) 
     },
+
     cart: (req, res) => {        
         res.render('products/cart');
-    },    
+    }, 
+
     test: async (req, res) => {
         let colors = await Color.findAll({ include: ['products'] });
         return res.send(colors);
