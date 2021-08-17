@@ -1,6 +1,19 @@
 
-const { Product, Brand, Color, Category } = require('../../database/models');
+const { Product, Brand, Color, Category, Image } = require('../../database/models');
 const {validationResult} = require('express-validator')
+
+const Sequelize = require("sequelize");
+const sequelize = new Sequelize(
+  process.env.DB_DATABASE,
+  process.env.DB_USERNAME,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT,
+    logging: false,
+    pool: { max: 5, min: 0, idle: 10000 },
+  }
+);
 
 module.exports = {
     
@@ -90,17 +103,37 @@ module.exports = {
              return res.status(401).json(errors);
          } 
     },
+
     destroy: async (req, res) => {
-        try{
-        await Product.destroy({ where: {id: req.params.id}});
-        return res.status(200).json('product remove succesfully')
-        }catch(error){
-        return res.status(400).json('error en backend');
-        }
+        const t = await sequelize.transaction()
+      try {
+         let productId = req.params.id;
+         await Image.destroy({ where: { productId: productId },
+              force: true },
+             { transaction: t }
+             );
+        let productDeleted = await Product.destroy({
+                where: {
+                  id: productId
+                },force: true
+              }, { transaction: t });
+
+         await t.commit();
+            if(productDeleted){
+                  return res.status(200).json(productDeleted);
+            }   
+       } catch (error) {
+         if (t) await t.rollback();
+           console.log("rollback")
+           return res.status(500).json(error);
+         } 
+        
     },
+
     cart: (req, res) => {        
         res.render('products/cart');
     },    
+
     test: async (req, res) => {
         let colors = await Color.findAll({ include: ['products'] });
         return res.send(colors);

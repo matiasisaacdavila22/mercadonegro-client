@@ -31,6 +31,7 @@ module.exports = {
 
     store: (req, res) => {
        let errors = validationResult(req);
+       console,log(req.body)
        if(errors.isEmpty()){
         const _body = req.body;
         _body.photo = req.file ? req.file.filename : '';

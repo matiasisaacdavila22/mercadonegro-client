@@ -23,6 +23,7 @@ const sequelize = new Sequelize(
 module.exports = {
   signup: async (req, res) => {
     let errors = validationResult(req);
+    console.log(req.body)
     if (errors.isEmpty()) {
       const t = await sequelize.transaction();
       try {

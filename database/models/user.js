@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      User.belongsTo(models.ShoppingCart, {
+      User.hasOne(models.ShoppingCart, {
         as:'shoppingCart',
         foreignKey:'userId'
       })
@@ -24,8 +24,8 @@ module.exports = (sequelize, DataTypes) => {
     role: DataTypes.INTEGER,
     phone: DataTypes.STRING,
     photo: DataTypes.STRING,
-    condition: DataTypes.INTEGER
-  }, {
+    condition: DataTypes.INTEGER,
+   }, {
     sequelize,
     modelName: 'User',
   });
