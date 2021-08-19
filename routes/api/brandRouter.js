@@ -22,13 +22,13 @@ router.get('/', verifySeller, controller.index);
 router.get('/:id',verifySeller, controller.show);
 
 // Acción de creación (a donde se envía el formulario) (POST)
-router.post('/',verifyAdmin, upload.single('file'),validations.validetCategory, controller.store);
+router.post('/',verifyAdmin, upload.single('file'),validations.validatedBrand, controller.store);
 
 // Formulario de edición de productos (GET)
 router.get('/:id/edit', verifyManager, controller.edit);
 
 // Acción de edición (a donde se envía el formulario) (PUT)
-router.put('/', verifyManager, upload.single('file'), validations.validetCategory, controller.update);
+router.put('/', verifyManager, upload.single('file'), validations.validatedBrand, controller.update);
 
 // Acción de borrado (DELETE)
 router.delete('/:id',verifyAdmin, controller.destroy);

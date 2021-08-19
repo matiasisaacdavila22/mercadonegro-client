@@ -35,6 +35,7 @@ const productApiRouter = require('./routes/api/productRouter');
 const categoryApiRouter = require('./routes/api/categoryRouter');
 const brandApiRouter = require('./routes/api/brandRouter');
 const productImageApiRouter = require('./routes/api/productImageRouter');
+const storeApiRouter = require('./routes/api/storeApiRouter');
 
 app.use('/', indexRouter);
 app.use('/', userRouter);
@@ -45,6 +46,7 @@ app.use('/api/product', productApiRouter);
 app.use('/api/category', categoryApiRouter);
 app.use('/api/brand', brandApiRouter);
 app.use('/api/productImage', productImageApiRouter);
+app.use('/api/store', storeApiRouter);
 
 // Iniciamos el servidor
 app.listen(3000, () => console.log('Servidor escuchando en el puerto 3000'));

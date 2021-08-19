@@ -4,6 +4,7 @@ const { Product, Category, User, Brand, Store } = require("../database/models");
 const cadena = ["puta", "puto", "mierda", "putas", "putos", "mierdas"];
 
 const validations = {
+  ///USER///
   validetUserCreate: [
     body("name")
       .notEmpty()
@@ -80,14 +81,14 @@ const validations = {
       return true;
     }),
   ],
-
+///LOGIN///
   validetUserLogin: [
     body("userName")
       .notEmpty()
       .withMessage("Ingreasa con tu Nombre de Usuario!"),
     body("password").notEmpty().withMessage("coloca tu clave"),
   ],
-
+///PRODUCT///
   productValidation: [
     body("categoryId").not().isIn("0").withMessage("Selecciona una Categoria"),
     body("name")
@@ -194,7 +195,7 @@ const validations = {
       return true;
     }),
   ],
-
+///IMAGE///
   validetProductImage: [
     body("orden")
       .notEmpty()
@@ -208,48 +209,8 @@ const validations = {
       .withMessage("Error id imagen"),
   ],
 
-  validetCategory: [
-    body("name")
-      .notEmpty()
-      .withMessage("Ingresa un Nombre para la categoria!")
-      .bail()
-      .isLength({ max: 80 })
-      .withMessage(
-        "el nombre de la categoria debe ser mas corto, hasta 80 caracteres"
-      )
-      .bail()
-      .custom((value) => {
-        let name = " " + value.toLowerCase() + " ";
-        for (let i = 0; i < cadena.length; i++) {
-          if (name.includes(` ${cadena[i]} `)) {
-            throw new Error("palabra prohibida name");
-          }
-        }
-        return true;
-      }),
-    body("file").custom((value, { req }) => {
-     /* console.log(req.body);
-      let acceptedExtensions = [".jpg", ".npg", ".gif"];
-      if (!value) {
-        console.log("no tiene un file");
-        if (req.body.oldFile) {
-          console.log("pero tiene un fileOld");
-          return true;
-        } else {
-          throw new Error("Tienes que subir una imagen");
-        }
-      }
-      let fileExtension = path.extname(req.file.originalname);
-
-      if (!acceptedExtensions.includes(fileExtension)) {
-        throw new Error(
-          `las Extensiones permitidas son ${acceptedExtensions.join(", ")}`
-        );
-      }*/
-      return true;
-    }),
-  ],
   ///////////////////////////////////////////////API////////////////////////
+  ///STORE///
   validetStoreCreate: [
     body("name")
       .notEmpty()
@@ -266,7 +227,7 @@ const validations = {
       }),
     body("storeName")
       .notEmpty()
-      .withMessage("Ingresa tu Nombre!")
+      .withMessage("Ingresa el Nombre del Store!")
       .bail()
       .custom((value) => {
         let name = " " + value.toLowerCase() + " ";
@@ -346,6 +307,90 @@ const validations = {
         return true;
       }),
   ],
+  ///CATEGORY///
+  validetCategory: [
+    body("name")
+      .notEmpty()
+      .withMessage("Ingresa un Nombre para la categoria!")
+      .bail()
+      .isLength({ max: 80 })
+      .withMessage(
+        "el nombre de la categoria debe ser mas corto, hasta 80 caracteres"
+      )
+      .bail()
+      .custom((value) => {
+        let name = " " + value.toLowerCase() + " ";
+        for (let i = 0; i < cadena.length; i++) {
+          if (name.includes(` ${cadena[i]} `)) {
+            throw new Error("palabra prohibida name");
+          }
+        }
+        return true;
+      })
+      .bail()
+      .custom(async (value, { req }) => {
+        const category = await Category.findOne({
+          where: { name: req.body.name },
+        });
+        if (category && category.id != req.body.id) {
+
+          throw new Error("category name alredy in use!");
+        }
+        return true;
+      }),
+    body("file").custom((value, { req }) => {
+     /* console.log(req.body);
+      let acceptedExtensions = [".jpg", ".npg", ".gif"];
+      if (!value) {
+        console.log("no tiene un file");
+        if (req.body.oldFile) {
+          console.log("pero tiene un fileOld");
+          return true;
+        } else {
+          throw new Error("Tienes que subir una imagen");
+        }
+      }
+      let fileExtension = path.extname(req.file.originalname);
+
+      if (!acceptedExtensions.includes(fileExtension)) {
+        throw new Error(
+          `las Extensiones permitidas son ${acceptedExtensions.join(", ")}`
+        );
+      }*/
+      return true;
+    }),
+  ],
+
+  ///BRAND///
+  validatedBrand: [
+    body("name")
+    .notEmpty()
+    .withMessage("Ingresa el Nombre!")
+    .bail()
+    .isLength({ max: 80 })
+    .withMessage(
+      "el nombre de la brand debe ser mas corto, hasta 80 caracteres"
+    )
+    .custom((value) => {
+      let name = " " + value.toLowerCase() + " ";
+      for (let i = 0; i < cadena.length; i++) {
+        if (name.includes(` ${cadena[i]} `)) {
+          throw new Error("palabra prohibida in name");
+        }
+      }
+      return true;
+    })
+    .bail()
+    .custom(async (value, { req }) => {
+      const brand = await Brand.findOne({
+        where: { name: req.body.name },
+      });
+      if (brand && brand.id != req.body.id) {
+        throw new Error("brand name alredy in use!");
+      }
+      return true;
+    }), 
+  ]
 };
 
 module.exports = validations;

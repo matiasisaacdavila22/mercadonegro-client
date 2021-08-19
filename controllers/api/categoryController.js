@@ -31,22 +31,22 @@ module.exports = {
 
     store: (req, res) => {
        let errors = validationResult(req);
-       console,log(req.body)
+       console.log(req.body)
        if(errors.isEmpty()){
-        const _body = req.body;
-        _body.photo = req.file ? req.file.filename : '';
+        const category = req.body;
+        category.photo = req.file ? req.file.filename : '';
         console.log(req.body);
           Category
-          .create(req.body)
+          .create(category)
              .then(category => {
                 return res.status(200).json(category);
             })
             .catch((error => {
-                return res.status(401).json(error);
+                return res.status(500).json(error);
             }))
            
         }else{
-            return res.status(200).json(errors);
+            return res.status(500).json(errors);
         }   
          
     },

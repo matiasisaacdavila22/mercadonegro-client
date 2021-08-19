@@ -1,29 +1,24 @@
-const { Brand } = require('../../database/models');
+const { Store } = require('../../database/models');
 const {validationResult} = require('express-validator')
 
 module.exports = {
     
     index :async (req, res) => {
-        const allbrands = await Brand.findAll();
-            if(!allbrands) return res.status(401).send('not found');    
-            return res.status(200).json(allbrands);
+        const allstores = await Store.findAll();
+            if(!allstores) return res.status(500).json('not found');    
+            return res.status(200).json(allstores);
     },
-    show: (req, res) => {
-        console.log('----------ENTRE AL Show----------');
-        Product
-            .findByPk(req.params.id, {
-                include: ['brand', 'colors'],
-            })
-            .then(product => {
-                if (product) {
-                //    res.json(product)
-                    res.render('products/show', { product });
-                } else {
-                    res.render('products/404');
-                }
-            })
-            .catch(error => res.send(error));
+
+    show: async (req, res) => {
+        try {
+            let id = req.params.id;
+            let store = await Store.findByPk(id);
+            return res.status(200).json(store);
+        } catch (error) {
+            return res.status(500).json(error);
+        }
     },
+
     create: async (req, res) => {
 
     },
