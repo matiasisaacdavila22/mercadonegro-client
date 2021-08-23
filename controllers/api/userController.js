@@ -1,6 +1,6 @@
 require("dotenv").config();
 const { validationResult } = require("express-validator");
-const { Store, User, ShoppingCart } = require("../../database/models");
+const { Store, User, ShoppingCart, UserStore } = require("../../database/models");
 const jwt = require("jsonwebtoken");
 const CryptoJs = require("crypto-js");
 const Notifications = require("../../services/notificationes");
@@ -21,6 +21,56 @@ const sequelize = new Sequelize(
 );
 
 module.exports = {
+
+  edit:async (req, res) => {
+   
+    try {
+      console.log(req.params)
+      let id = req.params.id;
+      let userStore = await UserStore.findOne({ where: { id: id } });
+
+      if (userStore) {
+        console.log(userStore)
+        return res.status(200).json(userStore);
+      }else{
+        return res.status(200).json('not found user')
+      } 
+    } catch (error) {
+      return res.status(500).json(error);
+    } 
+},
+
+  userById:async (req, res) => {
+   
+    try {
+      console.log(req.body)
+      let id = req.body.storeId;
+      let userAll = await UserStore.findAll({ where: { storeId: id } });
+      if (userAll) {
+        return res.status(200).json(userAll);
+      }else{
+        return res.status(200).json('not found user')
+      } 
+    } catch (error) {
+      return res.status(500).json(error);
+    } 
+},
+
+  index :async (req, res) => {
+    try {
+      console.log(req.body)
+      let id = req.body.storeId;
+      let userAll = await UserStore.findAll({ where: { storeId: id } });
+      if (userAll) {
+        return res.status(200).json(userAll);
+      }else{
+        return res.status(200).json('not found user')
+      } 
+    } catch (error) {
+      return res.status(500).json(error);
+    } 
+},
+
   signup: async (req, res) => {
     let errors = validationResult(req);
     console.log(req.body)
