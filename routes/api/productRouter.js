@@ -32,6 +32,8 @@ router.post('/',verifyAdmin, upload.single('image'), validations.productValidati
 // Formulario de edición de productos (GET)
 router.get('/:id/edit',verifyManager, controller.edit);
 
+router.put('/:id/status',verifyManager, controller.status);
+
 // Acción de edición (a donde se envía el formulario) (PUT)
 router.put('/',verifyManager, upload.single('image'), validations.productValidation, controller.update);
 

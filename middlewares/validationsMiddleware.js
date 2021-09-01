@@ -248,7 +248,7 @@ const validations = {
         }
         return true;
       }),
-    body("storeAddress")
+    body("adress")
       .notEmpty()
       .withMessage("Completa con tu Direccion!")
       .bail()

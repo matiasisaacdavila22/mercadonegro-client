@@ -1,4 +1,4 @@
-
+const authService = require('../../services/authService');
 const { Product, Brand, Color, Category, Image } = require('../../database/models');
 const {validationResult} = require('express-validator')
 
@@ -18,20 +18,23 @@ const sequelize = new Sequelize(
 module.exports = {
     
     index :(req, res) => {
-        Product
-        .findAll({
-           include: ['brand','store','category','images']
-        })
-        .then(products => {
-   //       res.json(products)
-   console.log(products) 
-          return res.status(200).json(products );
+        const token = req.headers.authorization.split(' ')[1];;
+        let perfil = authService.VerifyToken(token)
+        .then((data) => {
+            Product
+            .findAll({
+                where:{storeId:data._id},
+                    include: ['brand','store','category','images']
+            })
+            .then(products => {
+              return res.status(200).json(products );
+            })
         })
         .catch(error => {
           return res.status(401).json(error);
         });
-        
-    },
+     },
+
     show: (req, res) => {
         console.log('----------ENTRE AL Show----------');
         Product
@@ -53,17 +56,22 @@ module.exports = {
         let errors = validationResult(req);
         if(errors.isEmpty()){
          const _body = req.body;
+         _body.condition = 1;
          _body.photo = req.file ? req.file.filename : '';
+         const token = req.headers.authorization.split(' ')[1];;
+         let perfil = authService.VerifyToken(token)
+         .then(data => {
+             _body.storeId = data._id,
            Product
-           .create(req.body)
-              .then(confirm => {
-                 return res.status(200).json(confirm);
-             })
-             .catch((error => {
-                 return res.status(401).json(error);
-             }))
-            
-         }else{
+            .create(req.body)
+               .then(confirm => {
+                  return res.status(200).json(confirm);
+              })
+          })
+          .catch((error => {
+            return res.status(401).json(error);
+        }))
+       }else{
             console.log(errors)
              return res.status(401).json(errors);
          }    
@@ -80,6 +88,24 @@ module.exports = {
         }
     },
 
+     status:async (req, res) => {
+         try {
+            console.log(req.body.status)
+            console.log(req.params.id)
+        product = await Product.update({
+                condition:req.body.status,
+            }, {
+                where: {
+                    id: req.params.id,
+                }
+            });
+            return res.status(200).json(product);
+         } catch (error) {
+             console.log(error);
+         }
+         
+   
+     },
 
     update:async (req, res) => {
         let errors = validationResult(req);
