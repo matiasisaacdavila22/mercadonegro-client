@@ -18,6 +18,9 @@ const sequelize = new Sequelize(
 module.exports = {
     
     index :(req, res) => {
+        const portalUrl = req.headers.host
+        console.log(portalUrl)
+        console.log(req.headers.origin)
         const token = req.headers.authorization.split(' ')[1];;
         let perfil = authService.VerifyToken(token)
         .then((data) => {
@@ -52,29 +55,46 @@ module.exports = {
             .catch(error => res.send(error));
     },
 
-    store: (req, res) => {
+    store: async (req, res) => {
+        console.log(req.body)
         let errors = validationResult(req);
         if(errors.isEmpty()){
-         const _body = req.body;
-         _body.condition = 1;
-         _body.photo = req.file ? req.file.filename : '';
-         const token = req.headers.authorization.split(' ')[1];;
-         let perfil = authService.VerifyToken(token)
-         .then(data => {
-             _body.storeId = data._id,
-           Product
-            .create(req.body)
-               .then(confirm => {
-                  return res.status(200).json(confirm);
-              })
-          })
-          .catch((error => {
-            return res.status(401).json(error);
-        }))
-       }else{
-            console.log(errors)
-             return res.status(401).json(errors);
-         }    
+        const t = await sequelize.transaction();
+        try {
+            const _body = req.body;
+            _body.condition = 1;
+           // _body.photo = req.file ? req.file.filename : '';
+            const token = req.headers.authorization.split(' ')[1];;
+            let perfil = authService.VerifyToken(token)
+            .then(data => {
+                _body.storeId = data._id,
+               Product.create(req.body,{ transaction: t })
+                .then(product => {
+                    const imageNew = {
+                        name: _body.photo,
+                        orden: 1,
+                        productId: product.id,
+                        condition: 1,
+                    }
+                   Image
+                      .create(imageNew, { transaction: t })
+                      .then(image => {
+                        t.commit();
+                        return res.status(200).json('todo ok');
+                      }) 
+                })             
+             })
+            
+            
+        }catch(error) {
+            if (t) await t.rollback();
+            console.log("rollback");
+            console.log("el error es :" + e.message);
+        } 
+      }else{
+        console.log(errors)
+        return res.status(401).json(errors);
+        }   
      },
 
     edit: async (req, res) => {
@@ -86,6 +106,7 @@ module.exports = {
         }catch{
             return res.status(400).json('products no found');
         }
+        
     },
 
      status:async (req, res) => {
