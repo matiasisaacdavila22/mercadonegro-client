@@ -28,7 +28,7 @@ module.exports = {
        if(errors.isEmpty()){
        
         const imageNew = {
-            name: req.file.filename,
+            name: req.body.file,
             orden: req.body.orden,
             productId: req.body.productId,
             condition: 1,
